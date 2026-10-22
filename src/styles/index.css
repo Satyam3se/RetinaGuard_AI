@@ -1,0 +1,152 @@
+@import "tailwindcss";
+@config "../../tailwind.config.js";
+@import './tokens.css';
+
+@layer base {
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--c-white);
+    color: var(--c-gray-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'cv02','cv03','cv04','cv11';
+  }
+
+  ::selection { background: var(--c-teal); color: var(--c-black); }
+  :focus-visible { outline: 2px solid var(--c-teal); outline-offset: 2px; }
+}
+
+/* ─── Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: var(--c-gray-100); }
+::-webkit-scrollbar-thumb  { background: var(--c-gray-400); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--c-teal); }
+
+/* ─── Glass utilities ────────────────────────────── */
+.glass-dark {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.glass-light {
+  background: rgba(255,255,255,0.90);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* ─── Hairline grid lines ────────────────────────── */
+.grid-line-h {
+  position: absolute; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(0,194,168,0.12) 40%, rgba(0,194,168,0.12) 60%, transparent 100%);
+  pointer-events: none;
+}
+.grid-line-v {
+  position: absolute; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,194,168,0.10) 30%, rgba(0,194,168,0.10) 70%, transparent 100%);
+  pointer-events: none;
+}
+.grid-line-h-dark {
+  position: absolute; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.08) 40%, rgba(0,0,0,0.08) 60%, transparent 100%);
+  pointer-events: none;
+}
+
+/* ─── Typography helpers ─────────────────────────── */
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.teal-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--c-teal);
+}
+
+/* ─── Buttons ────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  background: var(--c-teal); color: var(--c-black);
+  font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 0.875rem 2rem;
+  transition: background 0.2s, transform 0.15s;
+  border: 1px solid var(--c-teal);
+}
+.btn-primary:hover { background: var(--c-teal-dark); border-color: var(--c-teal-dark); }
+
+.btn-black {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  background: var(--c-black); color: var(--c-white);
+  font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 0.875rem 2rem;
+  border: 1px solid var(--c-black);
+  transition: background 0.2s;
+}
+.btn-black:hover { background: var(--c-gray-800); }
+
+.btn-outline {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  background: transparent; color: var(--c-black);
+  font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 0.875rem 2rem;
+  border: 1px solid var(--c-gray-300);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.btn-outline:hover { background: var(--c-black); color: var(--c-white); border-color: var(--c-black); }
+
+.btn-outline-white {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  background: transparent; color: var(--c-white);
+  font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 0.875rem 2rem;
+  border: 1px solid rgba(255,255,255,0.35);
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-outline-white:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.7); }
+
+/* ─── Image overlays ─────────────────────────────── */
+.image-overlay-left {
+  background: linear-gradient(to right, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.65) 45%, rgba(0,0,0,0.0) 100%);
+}
+.image-overlay-full {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.65) 100%);
+}
+
+/* ─── Teal glow on dark ──────────────────────────── */
+.teal-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--c-teal);
+  box-shadow: 0 0 8px var(--c-teal);
+  display: inline-block;
+}
+
+/* ─── Animations ─────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up            { animation: fade-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-fade-up-delay-1    { animation-delay: 0.12s; }
+.animate-fade-up-delay-2    { animation-delay: 0.24s; }
+.animate-fade-up-delay-3    { animation-delay: 0.40s; }
+
+@keyframes pulse-teal {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--c-teal); }
+  50%       { opacity: 0.6; box-shadow: 0 0 14px var(--c-teal); }
+}
+.animate-pulse-teal { animation: pulse-teal 2s ease-in-out infinite; }
