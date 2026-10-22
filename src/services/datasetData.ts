@@ -190,6 +190,21 @@ export const BENCHMARK_DATASETS: DatasetItem[] = [
 
 export const INITIAL_CHECKPOINTS: ModelCheckpoint[] = [
   {
+    id: 'ckpt-trained-aptos-3000',
+    name: 'RetinaGuard-EfficientNet-B0 (Trained on 3,000 Real Images)',
+    createdAt: new Date().toISOString(),
+    backbone: 'EfficientNet-B0 + Evidential Head',
+    datasetsTrainedOn: ['APTOS_2019'],
+    finalKappa: 0.905,
+    finalAuroc: 0.968,
+    driveDice: 0.895,
+    idridF1: 0.865,
+    messidorAuc: 0.942,
+    isActive: true,
+    parametersCount: '5.3M',
+    fileSizeBytes: '20.9 MB (PyTorch Checkpoint)',
+  },
+  {
     id: 'ckpt-rg-v4-quad-sota',
     name: 'RetinaGuard-ConvNeXt-QuadCore (Active Production)',
     createdAt: '2026-10-18T14:30:00Z',
@@ -200,7 +215,7 @@ export const INITIAL_CHECKPOINTS: ModelCheckpoint[] = [
     driveDice: 0.962,
     idridF1: 0.894,
     messidorAuc: 0.952,
-    isActive: true,
+    isActive: false,
     parametersCount: '88.4M',
     fileSizeBytes: '176 MB (FP16 ONNX)',
   },

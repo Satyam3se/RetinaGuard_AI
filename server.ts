@@ -3,6 +3,8 @@ import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { execSync } from 'child_process';
+import fs from 'fs';
 import { GoogleGenAI, Type } from '@google/genai';
 import { BENCHMARK_DATASETS, INITIAL_CHECKPOINTS } from './src/services/datasetData.ts';
 import { DEMO_SESSIONS, DEMO_STATS } from './src/services/demoData.ts';
@@ -277,18 +279,42 @@ Provide structured clinical output with honest confidence scores.`;
             geminiAnalysisResult = JSON.parse(response.text.trim());
           }
         } catch (gErr) {
-          console.warn('[Gemini Vision] Fallback to calibrated benchmark engine:', gErr);
+          console.warn('[Gemini Vision] Optional cloud model unavailable, checking local PyTorch model...');
         }
+      }
+
+      let localPyTorchResult: any = null;
+      try {
+        const weightsFile = path.join(__dirname, 'retinaguard_multitask_weights.pt');
+        if (fs.existsSync(weightsFile)) {
+          let tempImg = '';
+          if (imageUrl.startsWith('data:image/')) {
+            const tempPath = path.join(__dirname, 'scratch_infer.jpg');
+            const b64 = imageUrl.split(',')[1];
+            fs.writeFileSync(tempPath, Buffer.from(b64, 'base64'));
+            tempImg = tempPath;
+          } else if (fs.existsSync(imageUrl)) {
+            tempImg = imageUrl;
+          }
+
+          if (tempImg) {
+            const cmd = `python "${path.join(__dirname, 'scripts', 'api_infer.py')}" "${tempImg}"`;
+            const out = execSync(cmd, { encoding: 'utf-8', timeout: 15000 });
+            localPyTorchResult = JSON.parse(out.trim());
+          }
+        }
+      } catch (err) {
+        console.warn('[PyTorch Engine] Inference error:', err);
       }
 
       // Generate or normalize multi-dataset screening session
       const screeningId = `RG-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      // Use Gemini results or realistic medical benchmark values
-      const stage = (geminiAnalysisResult?.aptosGrade ?? 2) as 0 | 1 | 2 | 3 | 4;
-      const confidence = geminiAnalysisResult?.aptosConfidence ?? 94.2;
+      // Priority: Gemini Vision -> Local Trained PyTorch Model -> Fallback Default
+      const stage = (geminiAnalysisResult?.aptosGrade ?? localPyTorchResult?.stage ?? 2) as 0 | 1 | 2 | 3 | 4;
+      const confidence = geminiAnalysisResult?.aptosConfidence ?? localPyTorchResult?.confidence ?? 94.2;
 
-      const dmeGrade = (geminiAnalysisResult?.messidorDmeGrade ?? (stage >= 2 ? 1 : 0)) as 0 | 1 | 2;
+      const dmeGrade = (geminiAnalysisResult?.messidorDmeGrade ?? localPyTorchResult?.dme_grade ?? (stage >= 2 ? 1 : 0)) as 0 | 1 | 2;
       const avr = geminiAnalysisResult?.driveAvrRatio ?? (stage >= 2 ? 0.58 : 0.67);
       const tortuosity = geminiAnalysisResult?.driveTortuosityScore ?? (stage >= 3 ? 0.44 : 0.18);
       const maCount = geminiAnalysisResult?.idridMicroaneurysms ?? (stage === 0 ? 0 : stage === 1 ? 3 : stage === 2 ? 12 : 28);
